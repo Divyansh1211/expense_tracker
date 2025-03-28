@@ -24,39 +24,45 @@ class NetworkRepo {
   }) : _authToken = authToken;
 
   ////get request
-  Future<String> getRequest(
+  Future<Map<String, dynamic>> getRequest(
       {required String url, bool requireAuth = true}) async {
     final Map<String, String> requestHeaders = {
       "Content-Type": "application/json",
-      "Cookie": "token=$_authToken"
+      "Authorization": "$_authToken"
     };
     if (requireAuth) {
       if ((_authToken ?? '').isEmpty) {
-        return 'Auth token is empty';
+        return {'Error': 'Auth token is empty'};
       }
     }
     try {
+      log('REQUEST TO : $url', name: "HTTP GET");
+      log('requireAuth: $requireAuth', name: "HTTP GET");
+
       final response = await http.get(Uri.parse(url), headers: requestHeaders);
       log('RESPONSE : ${response.body}', name: "HTTP GET");
-      return response.body;
+      return jsonDecode(response.body);
     } catch (e) {
-      return e.toString();
+      return {'error': e.toString()};
     }
   }
 
 ////post request
-  Future<String> postRequest({
+  Future<Map<String, dynamic>> postRequest({
     required String url,
     bool requireAuth = true,
     dynamic body,
   }) async {
     final Map<String, String> requestHeaders = {
       "Content-Type": "application/json",
-      "Cookie": "token=$_authToken"
+      "Authorization": "$_authToken"
     };
     if (requireAuth) {
       if ((_authToken ?? '').isEmpty) {
-        return 'Auth token is empty';
+        log('Auth token is empty', name: "HTTP POST");
+        return {
+          'error': 'Auth token is empty',
+        };
       }
     }
     try {
@@ -67,9 +73,10 @@ class NetworkRepo {
       final response = await http.post(Uri.parse(url),
           headers: requestHeaders, body: jsonEncode(body));
       log('RESPONSE : ${response.body}', name: "HTTP POST");
-      return response.body;
+      return jsonDecode(response.body);
     } catch (e) {
-      return e.toString();
+      log(e.toString(), name: "HTTP POST");
+      return {'error': e.toString()};
     }
   }
 
@@ -78,7 +85,7 @@ class NetworkRepo {
       {required String url, dynamic body, bool requireAuth = true}) async {
     final Map<String, String> requestHeaders = {
       "Content-Type": "application/json",
-      "Cookie": "token=$_authToken"
+      "Authorization": "$_authToken"
     };
     if (requireAuth) {
       if ((_authToken ?? '').isEmpty) {

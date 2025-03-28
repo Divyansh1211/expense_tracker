@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neosurge_fe/features/home/controller/expense_controller.dart';
 
-class AddExpense extends StatefulWidget {
+class AddExpense extends ConsumerStatefulWidget {
   const AddExpense({super.key});
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  ConsumerState<AddExpense> createState() => _AddExpenseState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
+class _AddExpenseState extends ConsumerState<AddExpense> {
   DateTime? selectedDate;
   int _value = 0;
-  String? selectedCategory;
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   List categories = [
     "Food",
     "Transportation",
@@ -25,7 +28,6 @@ class _AddExpenseState extends State<AddExpense> {
       firstDate: DateTime(2021),
       lastDate: DateTime(2030),
     );
-
     setState(() {
       selectedDate = pickedDate;
     });
@@ -34,17 +36,20 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
       title: const Text('Add Expense'),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ExpenseWidget(
+            ExpenseWidget(
+              controller: _amountController,
               isNumber: true,
               label: "Amount (INR)",
             ),
-            const ExpenseWidget(
+            ExpenseWidget(
+              controller: _descriptionController,
               isNumber: false,
               label: "Description",
             ),
@@ -113,7 +118,24 @@ class _AddExpenseState extends State<AddExpense> {
             ),
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            FocusManager.instance.primaryFocus?.unfocus();
+            if (_amountController.text.isNotEmpty &&
+                _descriptionController.text.isNotEmpty &&
+                selectedDate != null) {
+              ref.read(expenseControllerProvider.notifier).addExpense(
+                  context: context,
+                  amount: int.parse(_amountController.text),
+                  description: _descriptionController.text,
+                  category: categories[_value],
+                  dateTime: selectedDate!);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Colors.red,
+                  content: Text('All fields are required'),
+                ),
+              );
+            }
           },
         )
       ],
@@ -122,9 +144,11 @@ class _AddExpenseState extends State<AddExpense> {
 }
 
 class ExpenseWidget extends StatelessWidget {
+  final TextEditingController controller;
   final String label;
   final bool isNumber;
   const ExpenseWidget({
+    required this.controller,
     required this.isNumber,
     required this.label,
     super.key,
@@ -133,6 +157,7 @@ class ExpenseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
       decoration: InputDecoration(

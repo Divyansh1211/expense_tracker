@@ -42,7 +42,6 @@ expenseRouter.delete("/delete/:id", authMiddleware, async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Expense deleted successfully",
-      expense,
     });
   } catch (err) {
     res.status(500).json({
@@ -96,20 +95,25 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
     },
   });
 
-  res.json(expenses);
+  res.json({ expenses });
 });
 
 expenseRouter.get("/get-summary", authMiddleware, async (req, res) => {
   const userId = req.userId.id;
-  const startOfMonth = new Date(new Date().setDate(1));
+  // const startOfMonth = new Date(new Date().setDate(1));
+  //last 15 days
+  const startOfMonth = new Date(new Date().setDate(new Date().getDate() - 15));
 
   const summary = await client.expenseData.groupBy({
-    by: ["category"],
+    by: ["date"],
     where: { userId, date: { gte: startOfMonth } },
     _sum: { amount: true },
+    orderBy: {
+      date: "asc",
+    },
   });
 
-  res.json(summary);
+  res.json({ summary });
 });
 
 module.exports = { expenseRouter };

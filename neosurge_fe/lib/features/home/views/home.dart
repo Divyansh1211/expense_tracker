@@ -1,13 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:neosurge_fe/features/analytics/views/analytics.dart';
+import 'package:neosurge_fe/features/home/controller/expense_controller.dart';
 import 'package:neosurge_fe/features/home/views/widgets/add_expense.dart';
+import 'package:neosurge_fe/features/home/views/widgets/drawer.dart';
+import 'package:neosurge_fe/provider.dart';
 import '../../accounts/views/account.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    getSummary();
+    super.initState();
+  }
+
+  Future<void> getSummary() async {
+    await ref.read(expenseControllerProvider.notifier).getFilteredData();
+    await ref.read(expenseSummaryControllerProvider.notifier).getSummary();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userData = ref.watch(currentUserProvider);
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -29,18 +51,39 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Color(0xFF01AA71)),
-                child: Text('Drawer Header'),
+              DrawerHeader(
+                decoration: const BoxDecoration(color: Color(0xFF01AA71)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${userData?.name!}",
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "${userData?.email!}",
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              ListTile(
-                title: const Text('Item 1'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Item 2'),
-                onTap: () {},
-              ),
+              const DrawerWidget(icon: Icons.upload, title: "Get Premium"),
+              const Divider(height: 8),
+              const DrawerWidget(icon: Icons.roofing, title: "Bank Sync"),
+              const DrawerWidget(
+                  icon: Icons.download_outlined, title: "Imports"),
+              const DrawerWidget(icon: Icons.home_outlined, title: "Home"),
+              const Divider(height: 8),
+              const DrawerWidget(icon: Icons.logout, title: "Logout"),
             ],
           ),
         ),
@@ -72,3 +115,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+

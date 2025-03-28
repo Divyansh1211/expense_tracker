@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neosurge_fe/features/analytics/views/analytics.dart';
 import 'package:neosurge_fe/features/home/views/widgets/add_expense.dart';
 import '../../accounts/views/account.dart';
 
@@ -64,7 +65,7 @@ class HomeScreen extends StatelessWidget {
         body: const TabBarView(
           children: <Widget>[
             Account(),
-            Center(child: Text("It's rainy here")),
+            Analytics(),
           ],
         ),
       ),

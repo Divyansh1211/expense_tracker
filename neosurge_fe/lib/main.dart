@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neosurge_fe/features/home/views/home.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: (MyApp()),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          canvasColor: Colors.white,
+          primaryColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
           useMaterial3: true,
         ),
         home: const HomeScreen());

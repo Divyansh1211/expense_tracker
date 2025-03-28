@@ -12,11 +12,9 @@ final expenseRepoProvider = Provider(
 
 class ExpenseRepo {
   final NetworkRepo _api;
-  final Ref _ref;
 
   ExpenseRepo({required NetworkRepo api, required Ref ref})
-      : _api = api,
-        _ref = ref;
+      : _api = api;
 
   Future<Map<String, dynamic>> getSummary() async {
     final res =

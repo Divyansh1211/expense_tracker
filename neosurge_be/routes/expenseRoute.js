@@ -61,7 +61,7 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
     case "daily":
       dateFilter = {
         gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        // lte: new Date(),
+        lte: new Date(),
       };
       break;
     case "weekly":
@@ -100,8 +100,6 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
 
 expenseRouter.get("/get-summary", authMiddleware, async (req, res) => {
   const userId = req.userId.id;
-  // const startOfMonth = new Date(new Date().setDate(1));
-  //last 15 days
   const startOfMonth = new Date(new Date().setDate(new Date().getDate() - 15));
 
   const summary = await client.expenseData.groupBy({

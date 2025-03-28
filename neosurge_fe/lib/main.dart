@@ -18,14 +18,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          canvasColor: Colors.white,
-          primaryColor: Colors.white,
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-          useMaterial3: true,
-        ),
-        home: const Splashscreen());
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        canvasColor: Colors.white,
+        primaryColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+        useMaterial3: true,
+      ),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const Splashscreen(),
+        '/signup': (context) => const SignUpScreen(),
+      },
+    );
   }
 }

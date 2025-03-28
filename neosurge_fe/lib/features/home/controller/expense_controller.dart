@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neosurge_fe/features/home/repository/expense_repo.dart';
@@ -44,6 +42,7 @@ class ExpenseController extends StateNotifier<List<Expense>> {
     final res = await _expenseRepo.addExpense(expense: expense);
     if (res["success"]) {
       getFilteredData();
+      await _ref.read(expenseSummaryControllerProvider.notifier).getSummary();
       context.mounted ? Navigator.pop(context) : null;
     }
     return res;
@@ -59,12 +58,10 @@ final expenseSummaryControllerProvider =
 );
 
 class ExpenseSummaryController extends StateNotifier<List<ExpenseSummary>> {
-  final Ref _ref;
   final ExpenseRepo _expenseRepo;
 
   ExpenseSummaryController({required Ref ref, required ExpenseRepo expenseRepo})
       : _expenseRepo = expenseRepo,
-        _ref = ref,
         super([]);
 
   Future<Map<String, dynamic>> getSummary() async {

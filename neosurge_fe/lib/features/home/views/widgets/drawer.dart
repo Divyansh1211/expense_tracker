@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class DrawerWidget extends StatelessWidget {
   final IconData? icon;
   final String? title;
+  final Function()? onTap;
   const DrawerWidget({
+    this.onTap,
     this.icon,
     this.title,
     super.key,
@@ -27,7 +29,7 @@ class DrawerWidget extends StatelessWidget {
           ),
         ],
       ),
-      onTap: null,
+      onTap: onTap,
     );
   }
 }

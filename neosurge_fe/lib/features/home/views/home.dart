@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neosurge_fe/features/analytics/views/analytics.dart';
+import 'package:neosurge_fe/features/auth/views/signup.dart';
 import 'package:neosurge_fe/features/home/controller/expense_controller.dart';
 import 'package:neosurge_fe/features/home/views/widgets/add_expense.dart';
 import 'package:neosurge_fe/features/home/views/widgets/drawer.dart';
+import 'package:neosurge_fe/global/controller/shared_preferences.dart';
 import 'package:neosurge_fe/provider.dart';
 import '../../accounts/views/account.dart';
 
@@ -83,7 +85,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   icon: Icons.download_outlined, title: "Imports"),
               const DrawerWidget(icon: Icons.home_outlined, title: "Home"),
               const Divider(height: 8),
-              const DrawerWidget(icon: Icons.logout, title: "Logout"),
+              DrawerWidget(
+                icon: Icons.logout,
+                title: "Logout",
+                onTap: () {
+                  ref.read(sharedPrefsControllerPovider).clear();
+                  ref.read(authTokenProvider.notifier).update((state) => null);
+                  ref
+                      .read(currentUserProvider.notifier)
+                      .update((state) => null);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpScreen(),
+                      ));
+                },
+              ),
             ],
           ),
         ),
@@ -115,4 +132,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-

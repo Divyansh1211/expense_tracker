@@ -38,7 +38,6 @@ class _PieChartIndicatorState extends ConsumerState<PieChartIndicator> {
   }
 
   Future<void> exportToCsv(List<Expense> expenses) async {
-    log(expenses.toString());
     List<List<String>> csvData = [
       ["Amount", "Category"],
       ...expenses.map((e) => [
@@ -55,7 +54,9 @@ class _PieChartIndicatorState extends ConsumerState<PieChartIndicator> {
     final file = File(path);
 
     await file.writeAsString(csv);
-    log("CSV file saved at: $path");
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Expenses exported to $path'),
+    ));
   }
 
   @override

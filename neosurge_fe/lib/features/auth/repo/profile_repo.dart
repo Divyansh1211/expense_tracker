@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neosurge_fe/config.dart';
 import 'package:neosurge_fe/models/user_data.dart';
@@ -10,11 +9,8 @@ final profileRepoProvider = Provider(
 
 class ProfileRepo {
   final NetworkRepo _api;
-  final Ref _ref;
 
-  ProfileRepo({required NetworkRepo api, required Ref ref})
-      : _api = api,
-        _ref = ref;
+  ProfileRepo({required NetworkRepo api, required Ref ref}) : _api = api;
 
   Future<Map<String, dynamic>> signUpUser(UserData user) async {
     final res = await _api.postRequest(

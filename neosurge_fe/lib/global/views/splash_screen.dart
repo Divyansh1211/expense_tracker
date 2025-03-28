@@ -23,12 +23,12 @@ class _SplashscreenState extends ConsumerState<Splashscreen> {
         ref.read(authTokenProvider.notifier).update((state) => token);
         ref.read(currentUserProvider.notifier).update((state) => user);
         mounted
-            ? Navigator.push(context,
+            ? Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const HomeScreen()))
             : null;
       } else {
         mounted
-            ? Navigator.push(context,
+            ? Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const SignUpScreen()))
             : null;
       }

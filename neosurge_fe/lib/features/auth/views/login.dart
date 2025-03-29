@@ -62,6 +62,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 onPressed: () async {
                   FocusManager.instance.primaryFocus?.unfocus();
+                  if (_emailController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please fill all the fields"),
+                      ),
+                    );
+                    return;
+                  }
+                  ref.read(profileController.notifier).setLoading(true);
                   final res =
                       await ref.read(profileController.notifier).loginUser(
                             context: context,

@@ -94,11 +94,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ref
                       .read(currentUserProvider.notifier)
                       .update((state) => null);
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const SignUpScreen(),
-                      ));
+                      ),
+                      (route) => false);
                 },
               ),
             ],

@@ -8,6 +8,11 @@ expenseRouter.post("/add", authMiddleware, async (req, res) => {
   try {
     const { description, amount, category, date } = req.body;
     const userId = req.userId.id;
+    console.log(
+      new Date(
+        format(toZonedTime(new Date(date), "Asia/Kolkata"), "yyyy-MM-dd")
+      )
+    );
     const expense = await client.expenseData.create({
       data: {
         description,
@@ -63,22 +68,61 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
   switch (filter) {
     case "daily":
       dateFilter = {
-        gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        lte: new Date().toISOString(),
+        gte: new Date(
+          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd")
+        ),
+        lte: new Date(
+          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd") +
+            "T23:59:59.999Z"
+        ),
       };
       break;
     case "weekly":
-      const startOfWeek = new Date();
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-      dateFilter = { gte: startOfWeek, lte: new Date() };
+      const today = toZonedTime(new Date(), "Asia/Kolkata");
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay()); // Get Sunday
+
+      dateFilter = {
+        gte: new Date(
+          format(toZonedTime(startOfWeek, "Asia/Kolkata"), "yyyy-MM-dd")
+        ),
+        lte: new Date(
+          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd") +
+            "T23:59:59.999Z"
+        ),
+      };
       break;
     case "monthly":
-      const startOfMonth = new Date(new Date().setDate(1));
-      dateFilter = { gte: startOfMonth, lte: new Date() };
+      const currentDate = toZonedTime(new Date(), "Asia/Kolkata");
+      const startOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+
+      dateFilter = {
+        gte: new Date(
+          format(toZonedTime(startOfMonth, "Asia/Kolkata"), "yyyy-MM-dd")
+        ),
+        lte: new Date(
+          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd") +
+            "T23:59:59.999Z"
+        ),
+      };
       break;
     case "yearly":
-      const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-      dateFilter = { gte: startOfYear, lte: new Date() };
+      const yearDate = toZonedTime(new Date(), "Asia/Kolkata");
+      const startOfYear = new Date(yearDate.getFullYear(), 0, 1);
+
+      dateFilter = {
+        gte: new Date(
+          format(toZonedTime(startOfYear, "Asia/Kolkata"), "yyyy-MM-dd")
+        ),
+        lte: new Date(
+          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd") +
+            "T23:59:59.999Z"
+        ),
+      };
       break;
   }
 

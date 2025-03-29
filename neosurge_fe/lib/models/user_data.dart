@@ -3,8 +3,10 @@ class UserData {
   final String? name;
   final String? email;
   final String? password;
+  final bool? isLoading;
 
-  UserData({this.id, this.name, this.email, this.password});
+  UserData(
+      {this.id, this.name, this.email, this.password, this.isLoading = false});
 
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
@@ -29,12 +31,14 @@ class UserData {
     String? name,
     String? email,
     String? password,
+    bool? isLoading,
   }) {
     return UserData(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

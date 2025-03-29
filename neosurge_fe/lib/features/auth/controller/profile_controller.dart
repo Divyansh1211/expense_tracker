@@ -42,6 +42,7 @@ class ProfileController extends StateNotifier<UserData> {
               MaterialPageRoute(builder: (context) => const LoginScreen()))
           : null;
     }
+    setLoading(false);
     return result;
   }
 
@@ -67,6 +68,10 @@ class ProfileController extends StateNotifier<UserData> {
               (route) => false)
           : null;
     }
+    setLoading(false);
     return result;
   }
+
+  void setLoading(bool isLoading) =>
+      state = state.copyWith(isLoading: isLoading);
 }

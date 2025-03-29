@@ -21,6 +21,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
+    final isLoading = ref.watch(profileController).isLoading;
 
     return Scaffold(
       appBar: AppBar(),
@@ -76,30 +77,45 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   backgroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                onPressed: () async {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  if (_passwordController.text !=
-                      _confirmPasswordController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Passwords do not match')),
-                    );
-                    return;
-                  }
-                  final res =
-                      await ref.read(profileController.notifier).signUpUser(
-                            context: context,
-                            email: _emailController.text,
-                            name: _nameController.text,
-                            password: _passwordController.text,
+                onPressed: isLoading!
+                    ? null
+                    : () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        if (_emailController.text.isEmpty ||
+                            _nameController.text.isEmpty ||
+                            _passwordController.text.isEmpty ||
+                            _confirmPasswordController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('All fields are required')),
                           );
-                  if (!res["success"]) {
-                    context.mounted
-                        ? ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(res["message"])),
-                          )
-                        : null;
-                  }
-                },
+                          return;
+                        }
+                        if (_passwordController.text !=
+                            _confirmPasswordController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Passwords do not match')),
+                          );
+                          return;
+                        }
+                        ref.read(profileController.notifier).setLoading(true);
+                        final res = await ref
+                            .read(profileController.notifier)
+                            .signUpUser(
+                              context: context,
+                              email: _emailController.text,
+                              name: _nameController.text,
+                              password: _passwordController.text,
+                            );
+                        if (!res["success"]) {
+                          context.mounted
+                              ? ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(res["message"])),
+                                )
+                              : null;
+                        }
+                      },
                 child: const Text(
                   "Sign Up",
                   style: TextStyle(color: Colors.white),

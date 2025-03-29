@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neosurge_fe/features/auth/controller/profile_controller.dart';
 import 'package:neosurge_fe/features/home/controller/expense_controller.dart';
 
 class AddExpense extends ConsumerStatefulWidget {
@@ -35,6 +36,7 @@ class _AddExpenseState extends ConsumerState<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(profileController).isLoading;
     return AlertDialog(
       backgroundColor: Colors.white,
       title: const Text('Add Expense'),
@@ -111,32 +113,35 @@ class _AddExpenseState extends ConsumerState<AddExpense> {
           },
         ),
         TextButton(
-          child: const Text(
+          onPressed: isLoading!
+              ? null
+              : () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  if (_amountController.text.isNotEmpty &&
+                      _descriptionController.text.isNotEmpty &&
+                      selectedDate != null) {
+                    ref.read(profileController.notifier).setLoading(true);
+                    ref.read(expenseControllerProvider.notifier).addExpense(
+                        context: context,
+                        amount: int.parse(_amountController.text),
+                        description: _descriptionController.text,
+                        category: categories[_value],
+                        dateTime: selectedDate!);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('All fields are required'),
+                      ),
+                    );
+                  }
+                },
+          child: Text(
             'Add',
             style: TextStyle(
-              color: Colors.black,
+              color: isLoading ? Colors.grey : Colors.black,
             ),
           ),
-          onPressed: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-            if (_amountController.text.isNotEmpty &&
-                _descriptionController.text.isNotEmpty &&
-                selectedDate != null) {
-              ref.read(expenseControllerProvider.notifier).addExpense(
-                  context: context,
-                  amount: int.parse(_amountController.text),
-                  description: _descriptionController.text,
-                  category: categories[_value],
-                  dateTime: selectedDate!);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Text('All fields are required'),
-                ),
-              );
-            }
-          },
         )
       ],
     );

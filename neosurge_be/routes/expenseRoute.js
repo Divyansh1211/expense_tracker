@@ -8,11 +8,6 @@ expenseRouter.post("/add", authMiddleware, async (req, res) => {
   try {
     const { description, amount, category, date } = req.body;
     const userId = req.userId.id;
-    console.log(
-      new Date(
-        format(toZonedTime(new Date(date), "Asia/Kolkata"), "yyyy-MM-dd")
-      )
-    );
     const expense = await client.expenseData.create({
       data: {
         description,

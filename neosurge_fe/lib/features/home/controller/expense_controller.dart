@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:neosurge_fe/features/auth/controller/profile_controller.dart';
 import 'package:neosurge_fe/features/home/repository/expense_repo.dart';
 import 'package:neosurge_fe/models/expense.dart';
 import 'package:neosurge_fe/models/expense_summary.dart';
@@ -46,6 +47,7 @@ class ExpenseController extends StateNotifier<List<Expense>> {
       await _ref.read(expenseSummaryControllerProvider.notifier).getSummary();
       context.mounted ? Navigator.pop(context) : null;
     }
+    _ref.read(profileController.notifier).setLoading(false);
     return res;
   }
 }

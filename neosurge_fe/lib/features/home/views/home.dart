@@ -40,6 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           backgroundColor: const Color(0xFF01AA71),
           onPressed: () {
             showDialog(
+              barrierDismissible: !userData!.isLoading!,
               context: context,
               builder: (context) => const AddExpense(),
             );

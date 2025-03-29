@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:neosurge_fe/features/home/repository/expense_repo.dart';
 import 'package:neosurge_fe/models/expense.dart';
 import 'package:neosurge_fe/models/expense_summary.dart';
@@ -37,7 +38,7 @@ class ExpenseController extends StateNotifier<List<Expense>> {
       amount: amount,
       description: description,
       category: category,
-      date: "${dateTime.year}-${dateTime.month}-${dateTime.day}",
+      date: DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateTime),
     );
     final res = await _expenseRepo.addExpense(expense: expense);
     if (res["success"]) {

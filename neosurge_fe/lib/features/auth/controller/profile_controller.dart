@@ -56,11 +56,15 @@ class ProfileController extends StateNotifier<UserData> {
       final userData = UserData.fromJson(result['user']);
       _ref.read(currentUserProvider.notifier).update((state) => userData);
       _ref.read(authTokenProvider.notifier).update((state) => result['token']);
-      _ref.read(sharedPrefsControllerPovider).setCookie(cookie: result['token']);
+      _ref
+          .read(sharedPrefsControllerPovider)
+          .setCookie(cookie: result['token']);
       _ref.read(sharedPrefsControllerPovider).setUser(user: userData);
       context.mounted
-          ? Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()))
+          ? Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false)
           : null;
     }
     return result;

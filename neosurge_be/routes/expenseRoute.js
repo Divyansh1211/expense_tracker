@@ -1,6 +1,7 @@
 const express = require("express");
 const { client } = require("../utils");
 const { authMiddleware } = require("../authMiddleware");
+const { format, toZonedTime } = require("date-fns-tz");
 const expenseRouter = express.Router();
 
 expenseRouter.post("/add", authMiddleware, async (req, res) => {
@@ -12,7 +13,9 @@ expenseRouter.post("/add", authMiddleware, async (req, res) => {
         description,
         amount: parseInt(amount),
         category,
-        date: new Date(date),
+        date: new Date(
+          format(toZonedTime(new Date(date), "Asia/Kolkata"), "yyyy-MM-dd")
+        ),
         userId,
       },
     });
@@ -61,7 +64,7 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
     case "daily":
       dateFilter = {
         gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        lte: new Date(),
+        lte: new Date().toISOString(),
       };
       break;
     case "weekly":

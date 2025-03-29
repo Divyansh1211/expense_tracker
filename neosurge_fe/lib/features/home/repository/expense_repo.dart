@@ -13,8 +13,7 @@ final expenseRepoProvider = Provider(
 class ExpenseRepo {
   final NetworkRepo _api;
 
-  ExpenseRepo({required NetworkRepo api, required Ref ref})
-      : _api = api;
+  ExpenseRepo({required NetworkRepo api, required Ref ref}) : _api = api;
 
   Future<Map<String, dynamic>> getSummary() async {
     final res =
@@ -29,8 +28,12 @@ class ExpenseRepo {
   }
 
   Future<Map<String, dynamic>> addExpense({required Expense expense}) async {
-    final res = await _api.postRequest(
-        url: Config.addExpense, requireAuth: false, body: expense.toJson());
-    return res;
+    try {
+      final res = await _api.postRequest(
+          url: Config.addExpense, requireAuth: false, body: expense.toJson());
+      return res;
+    } catch (e) {
+      return {"success": false, "message": e.toString()};
+    }
   }
 }

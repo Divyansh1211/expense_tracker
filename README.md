@@ -14,6 +14,7 @@ An Expense Tracker application that allows users to record their expenses, categ
   - **Bar Chart:** Show expense trends for the last 15 days.
 - **CSV Export:** Download and export expenses to CSV format to the user's device.
 - **Time Zone Handling:** Stores dates in IST (Indian Standard Time) as strings.
+- **State Management:** Utilized Riverpod for managing application state.
 - **No Data Animation:** Displays a Lottie animation when no data is found.
 
 ## 🛠️ Tech Stack
@@ -21,6 +22,7 @@ An Expense Tracker application that allows users to record their expenses, categ
 - **Backend:** Node.js with Express
 - **Database:** PostgreSQL with Prisma ORM
 - **Frontend:** Flutter (for mobile application)
+- **State Management:** Riverpod
 - **Local Storage:** SharedPreferences (to store user session data)
 
 ## 📂 Project Structure

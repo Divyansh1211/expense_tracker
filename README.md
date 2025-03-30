@@ -117,6 +117,7 @@ npm run dev
 
 - **POST /api/v1/expense/add** – Add a new expense
 - **GET /api/v1/expense/filter?filter=daily – Fetch user expenses (supports filtering by daily, weekly, monthly, yearly)**
+- **GET /api/v1/expense/get-summary – Fetches user's past 15 days expense**
 
 ### Example Payload (Add Expense)
 

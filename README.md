@@ -2,6 +2,9 @@
 
 An Expense Tracker application that allows users to record their expenses, categorize them, and retrieve summaries based on daily, weekly, monthly, and yearly timeframes.
 
+## 🎥 Demo Video
+[Watch the demo](https://drive.google.com/file/d/1s_ZbGrv3gbv52gWdi5bi4-fpkFcacyEP/view?usp=sharing)
+
 ## 🚀 Features
 
 - **User Authentication:** Secure user login and registration using email.

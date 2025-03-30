@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -7,7 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neosurge_fe/features/accounts/views/widgets/indicator.dart';
 import 'package:neosurge_fe/features/home/controller/expense_controller.dart';
 import 'package:neosurge_fe/models/expense.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PieChartIndicator extends ConsumerStatefulWidget {
   const PieChartIndicator({
@@ -37,25 +40,42 @@ class _PieChartIndicatorState extends ConsumerState<PieChartIndicator> {
   }
 
   Future<void> exportToCsv(List<Expense> expenses) async {
-    List<List<String>> csvData = [
-      ["Amount", "Category"],
-      ...expenses.map((e) => [
-            "₹ ${e.amount.toString()}",
-            e.category!,
-          ])
-    ];
+    if (Platform.isAndroid) {
+      if (await Permission.storage.isDenied) {
+        await Permission.storage.request();
+      }
+      if (await Permission.manageExternalStorage.request().isDenied) {
+        log("Manage external storage permission denied");
+        return;
+      }
+    }
+    if (await Permission.storage.isGranted ||
+        await Permission.manageExternalStorage.isGranted) {
+      List<List<String>> csvData = [
+        ["Amount (INR)", "Category"],
+        ...expenses.map((e) => ["${e.amount}", e.category ?? "Unknown"])
+      ];
 
-    String csv = const ListToCsvConverter().convert(csvData);
+      String csv = const ListToCsvConverter().convert(csvData);
 
-    final directory = await getExternalStorageDirectories();
-    final path =
-        '${directory![0].path}/expenses${DateTime.now().millisecond}.csv';
-    final file = File(path);
-
-    await file.writeAsString(csv);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Expenses exported to $path'),
-    ));
+      final directory = await getDownloadsDirectory();
+      final path =
+          '${directory!.path}/expenses_${DateTime.now().millisecondsSinceEpoch}.csv';
+      final file = File(path);
+      await file.writeAsString(csv);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Expenses exported to $path'),
+        ));
+      }
+      try {
+        await OpenFile.open(path);
+      } catch (e) {
+        log(e.toString());
+      }
+    } else {
+      log("Permission denied");
+    }
   }
 
   @override

@@ -73,18 +73,14 @@ expenseRouter.get("/filter", authMiddleware, async (req, res) => {
       };
       break;
     case "weekly":
-      const today = toZonedTime(new Date(), "Asia/Kolkata");
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay()); // Get Sunday
-
+      const todayIST = toZonedTime(new Date(), "Asia/Kolkata");
+      const startOfWeekIST = new Date(todayIST);
+      startOfWeekIST.setDate(todayIST.getDate() - todayIST.getDay());
+      const startDateStr = format(startOfWeekIST, "yyyy-MM-dd");
+      const endDateStr = format(todayIST, "yyyy-MM-dd") + "T23:59:59.999Z";
       dateFilter = {
-        gte: new Date(
-          format(toZonedTime(startOfWeek, "Asia/Kolkata"), "yyyy-MM-dd")
-        ),
-        lte: new Date(
-          format(toZonedTime(new Date(), "Asia/Kolkata"), "yyyy-MM-dd") +
-            "T23:59:59.999Z"
-        ),
+        gte: new Date(startDateStr),
+        lte: new Date(endDateStr),
       };
       break;
     case "monthly":
